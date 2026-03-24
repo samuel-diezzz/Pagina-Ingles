@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English B1 Academy - Interactive Learning</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* --- LOGIN STYLES --- */
+        #login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-card h2 {
+            color: #764ba2;
+            margin-bottom: 20px;
+        }
+
+        .login-card p {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* --- WORD SEARCH STYLES --- */
+.wordsearch-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+#word-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 35px);
+    gap: 5px;
+    background: #764ba2;
+    padding: 10px;
+    border-radius: 8px;
+    user-select: none;
+}
+
+.grid-cell {
+    width: 35px;
+    height: 35px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.2s;
+    font-size: 0.9em;
+}
+
+.grid-cell.selected { background: #ffeb3b; color: #333; }
+.grid-cell.found { background: #4caf50 !important; color: white !important; cursor: default; }
+
+.word-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.word-item {
+    padding: 5px 10px;
+    background: #eee;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: bold;
+}
+
+.word-item.strikethrough {
+    text-decoration: line-through;
+    background: #d4edda;
+    color: #155724;
+}
+        /* --- ACADEMY STYLES --- */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        nav button:hover, nav button.active {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: none;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .content-card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .lesson {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .exercise-box {
+            background: #fff3cd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="password"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        button.btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button.btn:hover {
+            background: #764ba2;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .result.correct { background: #d4edda; color: #155724; }
+        .result.incorrect { background: #f8d7da; color: #721c24; }
+
+        .vocabulary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .vocab-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .vocab-card:hover { transform: translateY(-5px); }
+        .vocab-card.flipped { background: #fff; color: #764ba2; border: 2px solid #764ba2; }
+
+        .choice-btn {
+            display: block; width: 100%; text-align: left; padding: 10px;
+            margin: 5px 0; border: 1px solid #ddd; background: white; cursor: pointer;
+            border-radius: 5px;
+        }
+        .choice-btn.selected { background: #667eea; color: white; }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #6700ce);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2>Welcome Academic</h2>
+            <p>Enter your credentials to continue</p>
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Username (admin)">
+                <input type="password" id="password" placeholder="Password (1234)">
+                <button class="btn" onclick="handleLogin()">Log In</button>
+            </div>
+            <p id="login-error" style="color: red; display: none;">Invalid credentials. Please try again.</p>
+        </div>
+    </div>
+
+    <div id="main-content" style="display: none;">
+        <header>
+            <h1>🌍 English B1 Academy</h1>
+            <p>Welcome, <span id="user-display">Guest</span></p>
+        </header>
+
+        <nav>
+            <button class="nav-btn active" data-section="home">Home</button>
+            <button class="nav-btn" data-section="vocabulary">Vocabulary</button>
+            <button class="nav-btn" data-section="grammar">Grammar</button>
+            <button class="nav-btn" data-section="reading">Reading</button>
+            <button class="nav-btn" data-section="writing">Writing</button>
+            <button class="nav-btn" data-section="progress">My Progress</button>
+            <button class="nav-btn" onclick="handleLogout()" style="background: #e53e3e;">Logout</button>
+        </nav>
+
+        <div class="container" style="display: block;">
+            
+            <div id="home" class="section active">
+                <div class="content-card">
+                    <h2>Welcome to English B1 Academy</h2>
+                    <p>This course is designed for B1 level students (Intermediate) according to the Common European Framework of Reference.</p>
+                    
+                    <div class="stats">
+                        <div class="stat-box">
+                            <div class="number" id="lessonsCompleted">0</div>
+                            <div class="label">Lessons Completed</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="number" id="vocabularyCount">0</div>
+                            <div class="label">Words Learned</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="number" id="exercisesCompleted">0</div>
+                            <div class="label">Exercises Finished</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vocabulary" class="section">
+                <div class="exercise-box" style="background-color: #f3e5f5;">
+                <h3>🧩 Challenge 3: Word Search</h3>
+                    <p>Find these words: <b>ACHIEVE, AVOID, JOURNEY, HEALTHY</b></p>
+    
+                    <div class="wordsearch-container">
+                        <div id="word-grid"></div>
+                        <div class="word-list">
+                             <span class="word-item" id="word-ACHIEVE">ACHIEVE</span>
+                             <span class="word-item" id="word-AVOID">AVOID</span>
+                             <span class="word-item" id="word-JOURNEY">JOURNEY</span>
+                             <span class="word-item" id="word-HEALTHY">HEALTHY</span>
+                        </div>
+                     <div style="display:flex; gap:10px; width:100%">
+                        <button class="btn" style="background:#764ba2" onclick="verifyWord()">Verify Selection</button>
+                        <button class="btn" style="background:#666" onclick="resetSelection()">Reset</button>
+                    </div>
+                <div class="result" id="res_wordsearch"></div>
+             </div>
+            </div>
+                <div class="content-card">
+                    <h2>📚 Extended B1 Vocabulary</h2>
+                    <p>Click the cards to practice your memory (English / Spanish) and then complete the challenges below.</p>
+                    
+                    <div class="vocabulary-grid" id="vocabGrid"></div>
+
+                    <div class="exercise-box">
+                        <h3>💪 Challenge 1: Context (Fill in the blanks)</h3>
+                        <p>Use: <i>improve, avoid, healthy, journey</i></p>
+                        
+                        <div class="form-group">
+                            <label>1. You should eat more vegetables to stay _________.</label>
+                            <input type="text" id="vEx1" placeholder="Type here...">
+                            <button class="btn" style="width:auto" onclick="checkVocabSpecific('vEx1', 'healthy')">Check</button>
+                            <div class="result" id="res_vEx1"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>2. I want to _________ my English skills this year.</label>
+                            <input type="text" id="vEx2" placeholder="Type here...">
+                            <button class="btn" style="width:auto" onclick="checkVocabSpecific('vEx2', 'improve')">Check</button>
+                            <div class="result" id="res_vEx2"></div>
+                        </div>
+                    </div>
+
+                    <div class="exercise-box" style="background-color: #e2f3f5;">
+                        <h3>🧠 Challenge 2: Synonyms (B1 Level)</h3>
+                        <p>Which word from the list means the same as the following?</p>
+                        
+                        <div class="form-group">
+                            <label>A "Trip" or "Travel" (Noun):</label>
+                            <input type="text" id="vEx3" placeholder="Starts with J...">
+                            <button class="btn" style="width:auto" onclick="checkVocabSpecific('vEx3', 'journey')">Check</button>
+                            <div class="result" id="res_vEx3"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Someone you can trust is:</label>
+                            <input type="text" id="vEx4" placeholder="Starts with R...">
+                            <button class="btn" style="width:auto" onclick="checkVocabSpecific('vEx4', 'reliable')">Check</button>
+                            <div class="result" id="res_vEx4"></div>
+                        </div>
+                    </div>
+
+                    <div class="exercise-box" style="background:#fdf2e9;">
+                        <h3>📝 Challenge 4: Ten Quick Vocabulary Drills</h3>
+                        <p>Type the missing word. These drills recycle B1 vocabulary from travel, health, work, and study.</p>
+                        <div id="vocabExercises"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="grammar" class="section">
+                <div class="content-card">
+                    <h2>✏️ Grammar B1</h2>
+                    <div class="lesson">
+                        <h3>Conditionals: Second Conditional</h3>
+                        <p>Used for hypothetical or imaginary situations. <br> <strong>Structure:</strong> If + Past Simple, ... would + verb.</p>
+                    </div>
+                    <div class="exercise-box">
+                        <label>If I _____ (have) more money, I would buy a house.</label>
+                        <input type="text" id="grammarAnswer1" style="width: auto;">
+                        <button class="btn" style="width: auto;" onclick="checkGrammarExercise(1, 'had')">Verify</button>
+                        <div class="result" id="grammarResult1"></div>
+                    </div>
+                </div>
+                <div class="content-card">
+                    <h2>🧩 Ten Grammar Drills</h2>
+                    <p>Practice core B1 structures: conditionals, present perfect, reported speech, and gerunds/infinitives.</p>
+                    <div class="exercise-box" style="background:#eef7ff;">
+                        <div id="grammarExercises"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reading" class="section">
+                <div class="content-card">
+                    <h2>📖 Reading Comprehension</h2>
+                    <div class="lesson">
+                        <h3>Technology in Modern Life</h3>
+                        <p style="line-height: 1.8; margin-top: 15px; font-style: italic; color: #444;">
+                            Technology has become an essential part of our daily lives. From smartphones to laptops, 
+                            we rely on digital devices to communicate, work, and entertain ourselves. While technology 
+                            offers many advantages, such as instant communication and access to information, it also 
+                            presents challenges. Many people struggle with digital addiction, and there are growing 
+                            concerns about privacy and data security.
+                        </p>
+                    </div>
+
+                    <div class="exercise-box">
+                        <h4>📝 Comprehension Questions</h4>
+                        <div class="form-group">
+                            <label><strong>1. According to the text, what are two main advantages of technology?</strong></label>
+                            <textarea id="readingAnswer1" placeholder="Type your answer here..."></textarea>
+                            <button class="btn" onclick="checkReadingExercise(1)" style="width: auto; margin-top: 10px;">Submit Answer</button>
+                            <div class="result" id="readingResult1"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><strong>2. What is a negative aspect mentioned in the text?</strong></label>
+                            <div class="multiple-choice">
+                                <button class="choice-btn" onclick="selectChoice(this, 2, 'a')">a) High cost of devices</button>
+                                <button class="choice-btn" onclick="selectChoice(this, 2, 'b')">b) Digital addiction and privacy concerns</button>
+                                <button class="choice-btn" onclick="selectChoice(this, 2, 'c')">c) Lack of internet access</button>
+                            </div>
+                            <button class="btn" onclick="checkReadingMultiple(2, 'b')" style="width: auto; margin-top: 10px;">Verify Answer</button>
+                            <div class="result" id="readingResult2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2>🔎 Ten Quick Reading Checks</h2>
+                    <p>Answer the multiple-choice questions below based on the text above. Each focuses on detail, inference, or vocabulary in context.</p>
+                    <div class="exercise-box" style="background:#f0fff4;">
+                        <div id="readingExercises"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="writing" class="section">
+                <div class="content-card">
+                    <h2>✍️ Writing Practice</h2>
+                    <div class="lesson">
+                        <h3>Writing a Formal Email</h3>
+                        <p>A B1 level email should be clear and use appropriate connectors.</p>
+                        <div style="background: #e7f3ff; padding: 15px; border-left: 4px solid #0066cc; margin: 10px 0; font-family: monospace;">
+                            <strong>Useful Phrases:</strong><br>
+                            - I am writing to inquire about...<br>
+                            - I look forward to hearing from you.<br>
+                            - Yours sincerely.
+                        </div>
+                    </div>
+
+                    <div class="exercise-box">
+                        <h4>📧 Task: Inquiry about a course</h4>
+                        <p style="margin-bottom: 15px;"><strong>Instructions:</strong> Write an email to "Global English School" asking about schedules and prices for B1 courses. (Minimum 50 words).</p>
+                        <textarea id="writingAnswer" placeholder="Dear Sir/Madam..." style="min-height: 200px;"></textarea>
+                        <button class="btn" onclick="submitWriting()">Send for Review</button>
+                        <div class="result" id="writingResult"></div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h2>🗒️ Ten Writing Prompts</h2>
+                    <p>Write short responses (40+ words) to each prompt. Focus on clarity, connectors, and paragraphing.</p>
+                    <div class="exercise-box" style="background:#fff9e6;">
+                        <div id="writingExercises"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="progress" class="section">
+                <div class="content-card">
+                    <h2>📊 My Progress</h2>
+                    <div class="progress-bar"><div class="progress-fill" id="overallProgress"></div></div>
+                    <p id="progressText">0% completed</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 English B1 Academy</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA ---
+        const vocabularyData = [
+            { english: "Achieve", spanish: "Lograr" },
+            { english: "Avoid", spanish: "Evitar" },
+            { english: "Challenge", spanish: "Desafío" },
+            { english: "Healthy", spanish: "Saludable" },
+            { english: "Improve", spanish: "Mejorar" },
+            { english: "Journey", spanish: "Viaje" },
+            { english: "Knowledge", spanish: "Conocimiento" },
+            { english: "Reliable", spanish: "Confiable" }
+        ];
+
+        const vocabularyExercises = [
+            { prompt: "Complete: She wants to ____ her pronunciation before summer.", answers: ["improve"] },
+            { prompt: "Complete: They try to ____ junk food during exams.", answers: ["avoid"] },
+            { prompt: "Complete: The ____ to the mountains was exhausting.", answers: ["journey"] },
+            { prompt: "Complete: Eating fruit keeps you ____.", answers: ["healthy"] },
+            { prompt: "Which verb means 'reach a goal'?:", answers: ["achieve"] },
+            { prompt: "Find the synonym of 'dependable':", answers: ["reliable", "trustworthy"] },
+            { prompt: "Complete: You need solid ____ to pass the test.", answers: ["knowledge"] },
+            { prompt: "Complete: We faced a big ____ at work.", answers: ["challenge"] },
+            { prompt: "Complete: Let's ____ loud noise after 10 p.m.", answers: ["avoid"] },
+            { prompt: "Complete: I joined the gym to ____ my stamina.", answers: ["improve"] }
+        ];
+
+        const grammarExercises = [
+            { prompt: "If I ____ (be) you, I would study more.", answers: ["were"] },
+            { prompt: "She ____ (not/finish) the report yet.", answers: ["hasn't finished", "hasnt finished"] },
+            { prompt: "By this time next year, I ____ (live) abroad.", answers: ["will be living"] },
+            { prompt: "When I was a child, I ____ (use) to play outside.", answers: ["used"] },
+            { prompt: "If it ____ (rain), we will cancel the trip.", answers: ["rains"] },
+            { prompt: "He said he ____ (call) me later.", answers: ["would call"] },
+            { prompt: "We ____ (already/see) that movie.", answers: ["have already seen"] },
+            { prompt: "They ____ (work) here since 2019.", answers: ["have worked", "have been working"] },
+            { prompt: "The book was ____ (write) by a famous author.", answers: ["written"] },
+            { prompt: "She prefers ____ (walk) to driving.", answers: ["walking"] }
+        ];
+
+        const readingQuestions = [
+            { question: "What is one main advantage of technology mentioned?", options: [{ key: 'a', text: 'Lower electricity bills' }, { key: 'b', text: 'Instant communication' }, { key: 'c', text: 'Free devices for everyone' }], correct: 'b' },
+            { question: "Which challenge is highlighted in the text?", options: [{ key: 'a', text: 'Lack of entertainment' }, { key: 'b', text: 'Digital addiction' }, { key: 'c', text: 'Too much free time' }], correct: 'b' },
+            { question: "Why do people worry about privacy?", options: [{ key: 'a', text: 'Because devices are slow' }, { key: 'b', text: 'Because of data security concerns' }, { key: 'c', text: 'Because the internet is boring' }], correct: 'b' },
+            { question: "The tone of the paragraph is...", options: [{ key: 'a', text: 'Balanced: pros and cons' }, { key: 'b', text: 'Only negative' }, { key: 'c', text: 'Only positive' }], correct: 'a' },
+            { question: "'Rely on digital devices' most nearly means...", options: [{ key: 'a', text: 'Depend on them' }, { key: 'b', text: 'Avoid them' }, { key: 'c', text: 'Break them' }], correct: 'a' },
+            { question: "What does the author suggest about entertainment?", options: [{ key: 'a', text: 'It is impossible online' }, { key: 'b', text: 'It is one use of technology' }, { key: 'c', text: 'It is dangerous' }], correct: 'b' },
+            { question: "Which example of technology is NOT mentioned?", options: [{ key: 'a', text: 'Smartphones' }, { key: 'b', text: 'Laptops' }, { key: 'c', text: 'Smart cars' }], correct: 'c' },
+            { question: "What is a possible consequence of digital addiction?", options: [{ key: 'a', text: 'Better privacy' }, { key: 'b', text: 'Difficulty disconnecting' }, { key: 'c', text: 'Free storage' }], correct: 'b' },
+            { question: "What is the main idea of the text?", options: [{ key: 'a', text: 'Technology has only benefits' }, { key: 'b', text: 'Technology brings benefits and challenges' }, { key: 'c', text: 'Technology is disappearing' }], correct: 'b' },
+            { question: "What should users be careful about?", options: [{ key: 'a', text: 'Device colors' }, { key: 'b', text: 'Data security' }, { key: 'c', text: 'Screen size only' }], correct: 'b' }
+        ];
+
+        const writingPrompts = [
+            { title: "Describe your study routine", minWords: 40 },
+            { title: "Explain how you balance online and offline time", minWords: 40 },
+            { title: "Write about a memorable journey", minWords: 40 },
+            { title: "Give advice to a friend who feels stressed", minWords: 40 },
+            { title: "Describe your favorite healthy habit", minWords: 40 },
+            { title: "Explain why privacy online matters", minWords: 40 },
+            { title: "Write a short product review (app or device)", minWords: 40 },
+            { title: "Describe a challenge you recently solved", minWords: 40 },
+            { title: "Write a thank-you email to a teacher", minWords: 40 },
+            { title: "Explain your ideal weekend plan", minWords: 40 }
+        ];
+
+        const BASE_TASKS = { vocab: 4, grammar: 1, reading: 2, writing: 1 }; // existing manual tasks already on the page
+
+        let userStats = {
+            vocabCorrect: 0,
+            vocabTotal: vocabularyExercises.length + BASE_TASKS.vocab,
+            grammarCorrect: 0,
+            grammarTotal: grammarExercises.length + BASE_TASKS.grammar,
+            readingCompleted: 0,
+            readingTotal: readingQuestions.length + BASE_TASKS.reading,
+            writingCompleted: 0,
+            writingTotal: writingPrompts.length + BASE_TASKS.writing
+        };
+
+        let selectedChoices = {};
+        let readingSelections = {};
+        let currentSelection = [];
+        let writingBaseSolved = false;
+
+        const normalizeAnswer = (text) => text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+
+        const gridWords = ["ACHIEVE", "AVOID", "JOURNEY", "HEALTHY"];
+        const gridLetters = [
+            'A','C','H','I','E','V','E','X','Q','W',
+            'Z','A','V','O','I','D','L','P','J','K',
+            'X','O','U','R','N','E','Y','M','O','B',
+            'H','E','A','L','T','H','Y','R','U','O',
+            'T','Y','Z','W','B','C','D','E','R','G',
+            'P','L','M','N','O','P','Q','R','N','T',
+            'U','V','W','X','Y','Z','A','B','E','D',
+            'E','F','G','H','I','J','K','L','Y','N',
+            'O','P','Q','R','S','T','U','V','W','X',
+            'Y','Z','A','B','C','D','E','F','G','H'
+        ];
+
+        // --- LOGIN ---
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            if (user.toLowerCase() === 'admin' && pass === '1234') {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('user-display').textContent = user;
+                initializeVocabulary();
+                initWordSearch();
+            } else {
+                document.getElementById('login-error').style.display = 'block';
+            }
+        }
+
+        function handleLogout() { location.reload(); }
+
+        // --- NAVIGATION ---
+        function setupNavigation() {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    if(section) {
+                        document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+                        document.getElementById(section).classList.add('active');
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+        }
+
+        // --- VOCABULARY LOGIC ---
+        function initializeVocabulary() {
+            const grid = document.getElementById('vocabGrid');
+            grid.innerHTML = '';
+            vocabularyData.forEach(word => {
+                const card = document.createElement('div');
+                card.className = 'vocab-card';
+                card.innerHTML = `<span class="word-text">${word.english}</span>`;
+                card.onclick = () => {
+                    card.classList.toggle('flipped');
+                    card.querySelector('.word-text').textContent = card.classList.contains('flipped') ? word.spanish : word.english;
+                };
+                grid.appendChild(card);
+            });
+            document.getElementById('vocabularyCount').textContent = vocabularyData.length;
+        }
+
+        function renderVocabularyExercises() {
+            const container = document.getElementById('vocabExercises');
+            container.innerHTML = '';
+            vocabularyExercises.forEach((ex, idx) => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+
+                const label = document.createElement('label');
+                label.textContent = `${idx + 1}. ${ex.prompt}`;
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `vocab-gen-${idx}`;
+                input.placeholder = 'Type here...';
+
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.width = 'auto';
+                btn.textContent = 'Check';
+                btn.onclick = () => checkGeneratedVocab(idx);
+
+                const res = document.createElement('div');
+                res.className = 'result';
+                res.id = `vocab-result-${idx}`;
+
+                group.appendChild(label);
+                group.appendChild(input);
+                group.appendChild(btn);
+                group.appendChild(res);
+                container.appendChild(group);
+            });
+        }
+
+        function checkGeneratedVocab(idx) {
+            const ex = vocabularyExercises[idx];
+            const val = normalizeAnswer(document.getElementById(`vocab-gen-${idx}`).value);
+            const res = document.getElementById(`vocab-result-${idx}`);
+            const isCorrect = ex.answers.some(ans => normalizeAnswer(ans) === val);
+            if (isCorrect) {
+                res.className = 'result correct';
+                res.textContent = '✓ Correct!';
+                if (!res.dataset.solved) { userStats.vocabCorrect++; res.dataset.solved = 'true'; }
+            } else {
+                res.className = 'result incorrect';
+                res.textContent = '✗ Try again.';
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        function checkVocabSpecific(inputId, correctAnswer) {
+            const val = normalizeAnswer(document.getElementById(inputId).value);
+            const res = document.getElementById('res_' + inputId);
+            if (normalizeAnswer(correctAnswer) === val) {
+                res.className = 'result correct'; res.textContent = '✓ Correct! Well done.';
+                if(!res.dataset.solved) { userStats.vocabCorrect++; res.dataset.solved = 'true'; }
+            } else {
+                res.className = 'result incorrect'; res.textContent = '✗ Try again!';
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        // --- WORD SEARCH ---
+        function initWordSearch() {
+            const gridContainer = document.getElementById('word-grid');
+            gridContainer.innerHTML = '';
+            currentSelection = [];
+            gridLetters.forEach(letter => {
+                const cell = document.createElement('div');
+                cell.className = 'grid-cell';
+                cell.textContent = letter;
+                cell.onclick = () => {
+                    if (!cell.classList.contains('found')) {
+                        cell.classList.toggle('selected');
+                        updateCurrentSelection(cell);
+                    }
+                };
+                gridContainer.appendChild(cell);
+            });
+        }
+
+        function updateCurrentSelection(cell) {
+            if (cell.classList.contains('selected')) {
+                currentSelection.push(cell);
+            } else {
+                currentSelection = currentSelection.filter(c => c !== cell);
+            }
+        }
+
+        function verifyWord() {
+            const word = currentSelection.map(c => c.textContent).join('');
+            const res = document.getElementById('res_wordsearch');
+
+            if (gridWords.includes(word)) {
+                currentSelection.forEach(c => {
+                    c.classList.remove('selected');
+                    c.classList.add('found');
+                });
+                const target = document.getElementById('word-' + word);
+                if (target) target.classList.add('strikethrough');
+                res.className = 'result correct';
+                res.textContent = `✓ Found: ${word}!`;
+                currentSelection = [];
+            } else {
+                res.className = 'result incorrect';
+                res.textContent = '✗ Not a word or wrong order. Select letters from first to last.';
+            }
+            res.style.display = 'block';
+        }
+
+        function resetSelection() {
+            currentSelection.forEach(c => c.classList.remove('selected'));
+            currentSelection = [];
+            document.getElementById('res_wordsearch').style.display = 'none';
+        }
+
+        // --- GRAMMAR LOGIC ---
+        function renderGrammarExercises() {
+            const container = document.getElementById('grammarExercises');
+            container.innerHTML = '';
+            grammarExercises.forEach((ex, idx) => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+
+                const label = document.createElement('label');
+                label.textContent = `${idx + 1}. ${ex.prompt}`;
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `grammar-gen-${idx}`;
+                input.placeholder = 'Type here...';
+
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.width = 'auto';
+                btn.textContent = 'Verify';
+                btn.onclick = () => checkGrammarGenerated(idx);
+
+                const res = document.createElement('div');
+                res.className = 'result';
+                res.id = `grammar-result-${idx}`;
+
+                group.appendChild(label);
+                group.appendChild(input);
+                group.appendChild(btn);
+                group.appendChild(res);
+                container.appendChild(group);
+            });
+        }
+
+        function checkGrammarExercise(num, answer) {
+            const val = normalizeAnswer(document.getElementById(`grammarAnswer${num}`).value);
+            const res = document.getElementById(`grammarResult${num}`);
+            if (normalizeAnswer(answer) === val) {
+                res.className = 'result correct'; res.textContent = '✓ Perfect!';
+                if(!res.dataset.solved) { userStats.grammarCorrect++; res.dataset.solved = 'true'; }
+            } else {
+                res.className = 'result incorrect'; res.textContent = '✗ Check the rule and try again.';
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        function checkGrammarGenerated(idx) {
+            const ex = grammarExercises[idx];
+            const val = normalizeAnswer(document.getElementById(`grammar-gen-${idx}`).value);
+            const res = document.getElementById(`grammar-result-${idx}`);
+            const isCorrect = ex.answers.some(ans => normalizeAnswer(ans) === val);
+            if (isCorrect) {
+                res.className = 'result correct';
+                res.textContent = '✓ Correct!';
+                if (!res.dataset.solved) { userStats.grammarCorrect++; res.dataset.solved = 'true'; }
+            } else {
+                res.className = 'result incorrect';
+                res.textContent = '✗ Try again.';
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        // --- READING LOGIC ---
+        function selectChoice(btn, questionNum, choice) {
+            btn.parentElement.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedChoices[questionNum] = choice;
+        }
+
+        function checkReadingMultiple(num, correctChoice) {
+            const res = document.getElementById(`readingResult${num}`);
+            if (!selectedChoices[num]) return alert('Select an option!');
+            if (selectedChoices[num] === correctChoice) {
+                res.className = 'result correct'; res.textContent = '✓ Correct!';
+                if (!res.dataset.solved) { userStats.readingCompleted++; res.dataset.solved = 'true'; }
+            } else {
+                res.className = 'result incorrect'; res.textContent = '✗ Incorrect.';
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        function checkReadingExercise(num) {
+            const text = document.getElementById(`readingAnswer${num}`).value;
+            const res = document.getElementById(`readingResult${num}`);
+            if (text.length > 10) {
+                res.className = 'result correct'; res.textContent = '✓ Answer saved!';
+                if (!res.dataset.solved) { userStats.readingCompleted++; res.dataset.solved = 'true'; updateProgress(); }
+            } else {
+                res.className = 'result incorrect'; res.textContent = 'Please write a full sentence.';
+            }
+            res.style.display = 'block';
+        }
+
+        function renderReadingExercises() {
+            const container = document.getElementById('readingExercises');
+            container.innerHTML = '';
+            readingQuestions.forEach((q, idx) => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+
+                const label = document.createElement('label');
+                label.innerHTML = `<strong>${idx + 1}. ${q.question}</strong>`;
+
+                const optionsBox = document.createElement('div');
+                optionsBox.className = 'multiple-choice';
+
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.textContent = `${opt.key}) ${opt.text}`;
+                    btn.onclick = () => selectReadingChoice(idx, opt.key, optionsBox);
+                    optionsBox.appendChild(btn);
+                });
+
+                const checkBtn = document.createElement('button');
+                checkBtn.className = 'btn';
+                checkBtn.style.width = 'auto';
+                checkBtn.textContent = 'Verify Answer';
+                checkBtn.onclick = () => verifyReadingQuestion(idx);
+
+                const res = document.createElement('div');
+                res.className = 'result';
+                res.id = `reading-result-${idx}`;
+
+                group.appendChild(label);
+                group.appendChild(optionsBox);
+                group.appendChild(checkBtn);
+                group.appendChild(res);
+                container.appendChild(group);
+            });
+        }
+
+        function selectReadingChoice(idx, choice, box) {
+            box.querySelectorAll('.choice-btn').forEach(btn => btn.classList.remove('selected'));
+            const target = Array.from(box.querySelectorAll('.choice-btn')).find(b => b.textContent.startsWith(choice));
+            if (target) target.classList.add('selected');
+            readingSelections[idx] = choice;
+        }
+
+        function verifyReadingQuestion(idx) {
+            const res = document.getElementById(`reading-result-${idx}`);
+            if (!readingSelections[idx]) return alert('Select an option first!');
+            if (readingSelections[idx] === readingQuestions[idx].correct) {
+                res.className = 'result correct';
+                res.textContent = '✓ Correct!';
+                if (!res.dataset.solved) { userStats.readingCompleted++; res.dataset.solved = 'true'; }
+            } else {
+                res.className = 'result incorrect';
+                res.textContent = '✗ Incorrect. Read again and retry.';
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        // --- WRITING LOGIC ---
+        function submitWriting() {
+            const text = document.getElementById('writingAnswer').value;
+            const res = document.getElementById('writingResult');
+            const words = text.trim().split(/\s+/).filter(Boolean).length;
+            if (words >= 50) {
+                res.className = 'result correct'; res.textContent = `✓ Submitted! Word count: ${words}`;
+                if (!writingBaseSolved) { userStats.writingCompleted++; writingBaseSolved = true; }
+            } else {
+                res.className = 'result incorrect'; res.textContent = `Too short! (${words}/50 words)`;
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        function renderWritingExercises() {
+            const container = document.getElementById('writingExercises');
+            container.innerHTML = '';
+            writingPrompts.forEach((prompt, idx) => {
+                const group = document.createElement('div');
+                group.className = 'form-group';
+
+                const label = document.createElement('label');
+                label.innerHTML = `<strong>${idx + 1}. ${prompt.title}</strong> (min ${prompt.minWords} words)`;
+
+                const textarea = document.createElement('textarea');
+                textarea.id = `writing-gen-${idx}`;
+                textarea.placeholder = 'Write your answer here...';
+                textarea.style.minHeight = '120px';
+
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.width = 'auto';
+                btn.textContent = 'Save Response';
+                btn.onclick = () => submitWritingPrompt(idx);
+
+                const res = document.createElement('div');
+                res.className = 'result';
+                res.id = `writing-result-${idx}`;
+
+                group.appendChild(label);
+                group.appendChild(textarea);
+                group.appendChild(btn);
+                group.appendChild(res);
+                container.appendChild(group);
+            });
+        }
+
+        function submitWritingPrompt(idx) {
+            const prompt = writingPrompts[idx];
+            const text = document.getElementById(`writing-gen-${idx}`).value;
+            const res = document.getElementById(`writing-result-${idx}`);
+            const words = text.trim().split(/\s+/).filter(Boolean).length;
+            if (words >= prompt.minWords) {
+                res.className = 'result correct';
+                res.textContent = `✓ Saved! ${words} words.`;
+                if (!res.dataset.solved) { userStats.writingCompleted++; res.dataset.solved = 'true'; }
+            } else {
+                res.className = 'result incorrect';
+                res.textContent = `Too short (${words}/${prompt.minWords} words).`;
+            }
+            res.style.display = 'block';
+            updateProgress();
+        }
+
+        // --- PROGRESS ---
+        function updateProgress() {
+            const totalTasks = userStats.vocabTotal + userStats.grammarTotal + userStats.readingTotal + userStats.writingTotal;
+            const completed = userStats.vocabCorrect + userStats.grammarCorrect + userStats.readingCompleted + userStats.writingCompleted;
+            const percent = Math.round((completed / totalTasks) * 100);
+
+            document.getElementById('overallProgress').style.width = percent + '%';
+            document.getElementById('progressText').textContent = percent + '% completed';
+            document.getElementById('exercisesCompleted').textContent = completed;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            initializeVocabulary();
+            initWordSearch();
+            renderVocabularyExercises();
+            renderGrammarExercises();
+            renderReadingExercises();
+            renderWritingExercises();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>
